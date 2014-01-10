@@ -157,7 +157,7 @@ make <span class="nb">test</span>
 </pre></div>
 
 <h2>
-<a name="transformpropsobject-keepbooleanfunction" class="anchor" href="#transformpropsobject-keepbooleanfunction"><span class="octicon octicon-link"></span></a>transform(props:Object, [keep:Boolean]):Function</h2>
+<a name="transformpropsobject-optsfunction" class="anchor" href="#transformpropsobject-optsfunction"><span class="octicon octicon-link"></span></a>transform(props:Object, [opts]):Function</h2>
 
 <p>Creates a function that takes an object and will apply the given transformations to its properties and then returns a promise resolving to the result object.</p>
 
@@ -174,6 +174,22 @@ make <span class="nb">test</span>
 <span class="p">});</span>
 </pre></div>
 
+<p>If a transformation is not a function, it will be passed through as the transformation result for that property:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Q</span><span class="p">({</span><span class="nx">foo</span><span class="o">:</span> <span class="s1">'x'</span><span class="p">,</span> <span class="nx">bar</span><span class="o">:</span> <span class="s1">'y'</span><span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">qtils</span><span class="p">.</span><span class="nx">transform</span><span class="p">({</span>
+    <span class="nx">foo</span><span class="o">:</span> <span class="s1">'static'</span><span class="p">,</span>
+    <span class="nx">bar</span><span class="o">:</span> <span class="mi">5</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">))</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">foo</span><span class="p">);</span> <span class="c1">// 'static'</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">bar</span><span class="p">);</span> <span class="c1">// 5</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="optskeepboolean-default-false" class="anchor" href="#optskeepboolean-default-false"><span class="octicon octicon-link"></span></a>opts.keep:Boolean (default: false)</h3>
+
 <p>If <code>keep</code> is <code>true</code>, any properties that have no matching transformation will be copied to the result object verbatim. Otherwise they will be omitted.</p>
 
 <p>Example with <code>keep = true</code>:</p>
@@ -182,11 +198,34 @@ make <span class="nb">test</span>
 <span class="nx">Q</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span>
 <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">qtils</span><span class="p">.</span><span class="nx">transform</span><span class="p">({</span>
     <span class="nx">lastName</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();}</span>
-<span class="p">},</span> <span class="kc">true</span><span class="p">))</span>
+<span class="p">},</span> <span class="p">{</span><span class="nx">keep</span><span class="o">:</span> <span class="kc">true</span><span class="p">}))</span>
 <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span> <span class="c1">// {firstName: 'John', lastName: 'DOE'}</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span> <span class="c1">// {firstName: 'John', lastName: 'Doe'}</span>
 <span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="optsskipmissingboolean-default-false" class="anchor" href="#optsskipmissingboolean-default-false"><span class="octicon octicon-link"></span></a>opts.skipMissing:Boolean (default: false)</h3>
+
+<p>If <code>keepMissing</code> is <code>true</code>, any properties missing on the object will be omitted. Otherwise their transformations will be executed as if they were set to <code>undefined</code>.</p>
+
+<p>Example with <code>skipMissing = true</code>:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Q</span><span class="p">({})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">qtils</span><span class="p">.</span><span class="nx">transform</span><span class="p">({</span>
+    <span class="nx">bar</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();}</span>
+<span class="p">},</span> <span class="p">{</span><span class="nx">skipMissing</span><span class="o">:</span> <span class="kc">true</span><span class="p">}))</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span> <span class="c1">// {}</span>
+</pre></div>
+
+<p>Example with <code>skipMissing = false</code>:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">Q</span><span class="p">({})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">qtils</span><span class="p">.</span><span class="nx">transform</span><span class="p">({</span>
+    <span class="nx">bar</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">x</span><span class="p">;}</span>
+<span class="p">},</span> <span class="p">{</span><span class="nx">skipMissing</span><span class="o">:</span> <span class="kc">false</span><span class="p">}))</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span> <span class="c1">// {bar: undefined}</span>
 </pre></div>
 
 <h1>
