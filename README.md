@@ -29,7 +29,7 @@ make test
 
 # API
 
-## qtils.append(fn:Function):Function
+## append(fn:Function):Function
 
 Creates a function that will pass its argument to the given function and returns a promise that will be resolved to the function's result appended to the argument.
 
@@ -45,7 +45,7 @@ Q('foo')
 .then(console.log); // ['foo', 'boo']
 ```
 
-## qtils.prepend(fn:Function):Function
+## prepend(fn:Function):Function
 
 Creates a function that will pass its argument to the given function and returns a promise that will be resolved to the function's result prepended to the argument.
 
@@ -61,7 +61,7 @@ Q('foo')
 .then(console.log); // ['boo', 'foo']
 ```
 
-## qtils.tee(fn:Function):Function
+## tee(fn:Function):Function
 
 Creates a function that will pass its argument to the given function and returns a promise that will be resolved to the argument when the function's result is fulfilled.
 
@@ -88,7 +88,7 @@ Q('foo')
 .then(console.log); // 'foo'
 ```
 
-## qtils.eacharg(fns...):Function
+## eacharg(fns...):Function
 
 Creates a function that will pass each item in an array to each function and returns a promise that will be resolved to an array containing the results.
 
@@ -105,7 +105,7 @@ Q(['Foo', 'Bar', 'Qux'])
 .then(console.log); // ['FOO', 'bar', 'QUX']
 ```
 
-## qtils.allargs(fns...):Function
+## allargs(fns...):Function
 
 Creates a function that will pass its argument to each function and returns a promise that will be resolved to an array containing the results.
 
@@ -118,6 +118,40 @@ Q(['foo', 'bar', 'qux'])
     function(arr) {return arr.join('+');}
 ))
 .then(console.log); // ['foo-bar-qux', 'foo+bar+qux']
+```
+
+## transform(props:Object, [keep:Boolean]):Function
+
+Creates a function that takes an object and will apply the given transformations to its properties and then returns a promise resolving to the result object.
+
+Example:
+
+```javascript
+var person = {firstName: 'John', lastName: 'Doe'};
+Q(person)
+.then(qtils.transform({
+    lastName: function(str) {return str.toUpperCase();}
+}))
+.then(function(result) {
+    console.log(result); // {lastName: 'DOE'}
+    console.log(person); // {firstName: 'John', lastName: 'Doe'}
+});
+```
+
+If `keep` is `true`, any properties that have no matching transformation will be copied to the result object verbatim. Otherwise they will be omitted.
+
+Example with `keep = true`:
+
+```javascript
+var person = {firstName: 'John', lastName: 'Doe'};
+Q(person)
+.then(qtils.transform({
+    lastName: function(str) {return str.toUpperCase();}
+}, true))
+.then(function(result) {
+    console.log(result); // {firstName: 'John', lastName: 'DOE'}
+    console.log(person); // {firstName: 'John', lastName: 'Doe'}
+});
 ```
 
 # License
