@@ -1,4 +1,4 @@
-/*! qtils 0.2.0 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
+/*! qtils 0.2.1 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
 var Q = require('q'),
   slice = Function.prototype.call.bind(Array.prototype.slice);
 

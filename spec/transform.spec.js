@@ -58,6 +58,19 @@ describe('qtils.transform(props)', function() {
       done();
     });
   });
+  it('transforms missing properties, too', function(done) {
+    Q({foo: 'x'})
+    .then(transform({
+      foo: function(x) {return x.toUpperCase();},
+      bar: function(y) {return y ? true : false;}
+    }))
+    .done(function(result) {
+      expect(result.foo).to.equal('X');
+      expect(result).to.have.property('bar');
+      expect(result.bar).to.equal(false);
+      done();
+    });
+  });
 });
 
 describe('qtils.transform(props, true)', function() {
