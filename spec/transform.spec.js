@@ -71,6 +71,17 @@ describe('qtils.transform(props)', function() {
       done();
     });
   });
+  it('supports literal transformations', function(done) {
+    var transforms = {foo: [], bar: 5, qux: 'a'};
+    Q({foo: 'x', bar: 'y', qux: 'z'})
+    .then(transform(transforms))
+    .done(function(result) {
+      expect(result.foo).to.equal(transforms.foo);
+      expect(result.bar).to.equal(transforms.bar);
+      expect(result.qux).to.equal(transforms.qux);
+      done();
+    });
+  });
 });
 
 describe('qtils.transform(props, true)', function() {

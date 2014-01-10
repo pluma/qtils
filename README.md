@@ -154,6 +154,20 @@ Q(person)
 });
 ```
 
+If a transformation is not a function, it will be passed through as the transformation result for that property:
+
+```javascript
+Q({foo: 'x', bar: 'y'})
+.then(qtils.transform({
+    foo: 'static',
+    bar: 5
+}, true))
+.then(function(result) {
+    console.log(result.foo); // 'static'
+    console.log(result.bar); // 5
+});
+```
+
 # License
 
 The MIT/Expat license.

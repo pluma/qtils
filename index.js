@@ -1,4 +1,4 @@
-/*! qtils 0.2.1 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
+/*! qtils 0.2.2 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
 var Q = require('q'),
   slice = Function.prototype.call.bind(Array.prototype.slice);
 
@@ -60,7 +60,8 @@ function Qtransform(props, keep) {
     }
 
     return Q.all(Object.keys(props).map(function(key) {
-      return Q(props[key](data[key]))
+      var trans = props[key];
+      return Q(typeof trans === 'function' ? trans(data[key]) : trans)
       .then(function(value) {
         result[key] = value;
       });
