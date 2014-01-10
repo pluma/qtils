@@ -1,4 +1,4 @@
-/*! qtils 0.2.2 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
+/*! qtils 0.3.0 Copyright (c) 2014 Alan Plum. MIT licensed. @preserve */
 var Q = require('q'),
   slice = Function.prototype.call.bind(Array.prototype.slice);
 
@@ -49,17 +49,27 @@ function Qprepend(fn) {
   };
 }
 
-function Qtransform(props, keep) {
+function Qtransform(props, opts) {
+  props = props || {};
+  opts = opts || {keep: false, skipMissing: false};
+  var keys = Object.keys(props);
   return function(data) {
-    var result = {};
+    var dataKeys = Object.keys(data),
+      result = {};
 
-    if (keep) {
-      Object.keys(data).forEach(function(key) {
+    if (opts.keep) {
+      dataKeys.forEach(function(key) {
         result[key] = data[key];
       });
     }
 
-    return Q.all(Object.keys(props).map(function(key) {
+    if (opts.skipMissing) {
+      keys = keys.filter(function(key) {
+        return ~dataKeys.indexOf(key);
+      });
+    }
+
+    return Q.all(keys.map(function(key) {
       var trans = props[key];
       return Q(typeof trans === 'function' ? trans(data[key]) : trans)
       .then(function(value) {

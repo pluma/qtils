@@ -120,7 +120,7 @@ Q(['foo', 'bar', 'qux'])
 .then(console.log); // ['foo-bar-qux', 'foo+bar+qux']
 ```
 
-## transform(props:Object, [keep:Boolean]):Function
+## transform(props:Object, [opts]):Function
 
 Creates a function that takes an object and will apply the given transformations to its properties and then returns a promise resolving to the result object.
 
@@ -138,22 +138,6 @@ Q(person)
 });
 ```
 
-If `keep` is `true`, any properties that have no matching transformation will be copied to the result object verbatim. Otherwise they will be omitted.
-
-Example with `keep = true`:
-
-```javascript
-var person = {firstName: 'John', lastName: 'Doe'};
-Q(person)
-.then(qtils.transform({
-    lastName: function(str) {return str.toUpperCase();}
-}, true))
-.then(function(result) {
-    console.log(result); // {firstName: 'John', lastName: 'DOE'}
-    console.log(person); // {firstName: 'John', lastName: 'Doe'}
-});
-```
-
 If a transformation is not a function, it will be passed through as the transformation result for that property:
 
 ```javascript
@@ -166,6 +150,48 @@ Q({foo: 'x', bar: 'y'})
     console.log(result.foo); // 'static'
     console.log(result.bar); // 5
 });
+```
+
+### opts.keep:Boolean (default: false)
+
+If `keep` is `true`, any properties that have no matching transformation will be copied to the result object verbatim. Otherwise they will be omitted.
+
+Example with `keep = true`:
+
+```javascript
+var person = {firstName: 'John', lastName: 'Doe'};
+Q(person)
+.then(qtils.transform({
+    lastName: function(str) {return str.toUpperCase();}
+}, {keep: true}))
+.then(function(result) {
+    console.log(result); // {firstName: 'John', lastName: 'DOE'}
+    console.log(person); // {firstName: 'John', lastName: 'Doe'}
+});
+```
+
+### opts.skipMissing:Boolean (default: false)
+
+If `keepMissing` is `true`, any properties missing on the object will be omitted. Otherwise their transformations will be executed as if they were set to `undefined`.
+
+Example with `skipMissing = true`:
+
+```javascript
+Q({})
+.then(qtils.transform({
+    bar: function(str) {return str.toUpperCase();}
+}, {skipMissing: true}))
+.then(console.log); // {}
+```
+
+Example with `skipMissing = false`:
+
+```javascript
+Q({})
+.then(qtils.transform({
+    bar: function(x) {return x;}
+}, {skipMissing: false}))
+.then(console.log); // {bar: undefined}
 ```
 
 # License

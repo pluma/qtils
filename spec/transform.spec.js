@@ -84,17 +84,32 @@ describe('qtils.transform(props)', function() {
   });
 });
 
-describe('qtils.transform(props, true)', function() {
+describe('qtils.transform(props, {keep: true})', function() {
   it('passes on properties that have no transformations', function(done) {
     Q({foo: 'x', bar: 'y', qux: 'z'})
     .then(transform({
       foo: function(x) {return x.toUpperCase();},
       bar: function(y) {return y.toUpperCase();}
-    }, true))
+    }, {keep: true}))
     .done(function(result) {
       expect(result.foo).to.equal('X');
       expect(result.bar).to.equal('Y');
       expect(result.qux).to.equal('z');
+      done();
+    });
+  });
+});
+
+describe('qtils.transform(props, {skipMissing: true})', function() {
+  it('skips missing properties', function(done) {
+    Q({foo: 'x'})
+    .then(transform({
+      foo: function(x) {return x.toUpperCase();},
+      bar: function() {return true;}
+    }, {skipMissing: true}))
+    .done(function(result) {
+      expect(result.foo).to.equal('X');
+      expect(result).not.to.have.property('bar');
       done();
     });
   });
